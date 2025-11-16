@@ -50,6 +50,12 @@
 }
 
 @layer base {
+  html {
+    @apply scroll-smooth;
+  }
+}
+
+@layer base {
   * {
     @apply border-border;
   }

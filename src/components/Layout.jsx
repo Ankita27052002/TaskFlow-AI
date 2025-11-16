@@ -2,6 +2,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { LayoutDashboard, KanbanSquare, BarChart3, Sparkles } from 'lucide-react'
 import { Button } from './ui/button'
+import ThemeToggle from './ThemeToggle'
 
 export default function Layout() {
   const location = useLocation()
@@ -13,9 +14,9 @@ export default function Layout() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 transition-colors">
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
+      <header className="border-b bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -25,7 +26,7 @@ export default function Layout() {
               </h1>
             </div>
 
-            <nav className="flex gap-2">
+            <nav className="flex items-center gap-2">
               {navItems.map((item) => {
                 const Icon = item.icon
                 const isActive = location.pathname === item.path
@@ -42,6 +43,7 @@ export default function Layout() {
                   </Link>
                 )
               })}
+              <ThemeToggle />
             </nav>
           </div>
         </div>
