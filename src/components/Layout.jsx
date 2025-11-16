@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { LayoutDashboard, KanbanSquare, BarChart3, Sparkles } from 'lucide-react'
+import { LayoutDashboard, KanbanSquare, BarChart3, CheckSquare } from 'lucide-react'
 import { Button } from './ui/button'
 import ThemeToggle from './ThemeToggle'
 
@@ -14,14 +14,28 @@ export default function Layout() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 transition-colors">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 dark:from-slate-950 dark:to-emerald-950 transition-colors">
       {/* Header */}
       <header className="border-b bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-8 w-8 text-primary" />
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+              <div className="relative">
+                <CheckSquare className="h-8 w-8 text-primary" strokeWidth={2.5} />
+                <motion.div
+                  className="absolute -top-1 -right-1 h-3 w-3 bg-primary rounded-full"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [1, 0.8, 1],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                />
+              </div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary via-emerald-500 to-green-600 bg-clip-text text-transparent">
                 TaskFlow AI
               </h1>
             </div>
