@@ -4,6 +4,8 @@ import { useAuth } from './contexts/AuthContext'
 import Layout from './components/Layout'
 import Dashboard from './pages/Dashboard'
 import KanbanBoard from './pages/KanbanBoard'
+import SprintPlanning from './pages/SprintPlanning'
+import ScrumBoard from './pages/ScrumBoard'
 import Analytics from './pages/Analytics'
 import Login from './pages/Login'
 import VerifyEmail from './pages/VerifyEmail'
@@ -33,6 +35,8 @@ function App() {
         >
           <Route index element={<Dashboard />} />
           <Route path="kanban" element={<KanbanBoard />} />
+          <Route path="sprint-planning" element={<SprintPlanning />} />
+          <Route path="scrum-board" element={<ScrumBoard />} />
           <Route path="analytics" element={<Analytics />} />
         </Route>
       </Routes>

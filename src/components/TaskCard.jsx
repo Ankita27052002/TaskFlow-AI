@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion'
-import { Calendar, Clock, Trash2, Edit } from 'lucide-react'
+import { Calendar, Clock, Trash2, Edit, Zap } from 'lucide-react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { getPriorityColor, formatDate } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 
-export default function TaskCard({ task, onEdit, onDelete }) {
+export default function TaskCard({ task, onEdit, onDelete, showStoryPoints = false }) {
   const {
     attributes,
     listeners,
@@ -54,17 +54,23 @@ export default function TaskCard({ task, onEdit, onDelete }) {
               </p>
             )}
 
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
               {task.dueDate && (
                 <div className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
-                  {formatDate(task.dueDate)}
+                  <span>{formatDate(task.dueDate)}</span>
                 </div>
               )}
               {task.estimatedTime && (
                 <div className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  {task.estimatedTime}h
+                  <span>{task.estimatedTime}h</span>
+                </div>
+              )}
+              {showStoryPoints && task.storyPoints > 0 && (
+                <div className="flex items-center gap-1 text-primary font-medium">
+                  <Zap className="h-3 w-3" />
+                  <span>{task.storyPoints} pts</span>
                 </div>
               )}
             </div>

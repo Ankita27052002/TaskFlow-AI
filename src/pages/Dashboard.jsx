@@ -220,6 +220,7 @@ export default function Dashboard() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         task={selectedTask}
+        boardType="kanban"
       />
     </div>
   )

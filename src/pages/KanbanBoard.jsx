@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useSensors, useDroppable } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { motion } from 'framer-motion'
 import { Plus, Sparkles } from 'lucide-react'
-import { updateTaskStatus, bulkUpdateTasks } from '@/store/slices/taskSlice'
+import { updateTaskStatus, bulkUpdateTasks, selectKanbanTasks } from '@/store/slices/taskSlice'
 import { setAiAnalyzing } from '@/store/slices/uiSlice'
 import { aiService } from '@/services/aiService'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -13,6 +14,72 @@ import { useToast } from '@/components/ui/toaster'
 import TaskDialog from '@/components/TaskDialog'
 import TaskCard from '@/components/TaskCard'
 import { deleteTask } from '@/store/slices/taskSlice'
+
+// Draggable Task Item
+function DraggableTask({ task, onEdit, onDelete }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
+    id: task.id 
+  })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  }
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <TaskCard task={task} onEdit={onEdit} onDelete={onDelete} />
+    </div>
+  )
+}
+
+// Droppable Column
+function DroppableColumn({ column, tasks, onEdit, onDelete }) {
+  const { setNodeRef } = useDroppable({ id: column.id })
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card className={`border-l-4 ${column.color} min-h-[600px]`}>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span>{column.title}</span>
+            <span className="text-sm font-normal text-muted-foreground">
+              {tasks.length}
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div ref={setNodeRef} className="space-y-3 min-h-[500px]">
+            <SortableContext
+              items={tasks.map(t => t.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {tasks.map((task) => (
+                <DraggableTask
+                  key={task.id}
+                  task={task}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                />
+              ))}
+            </SortableContext>
+
+            {tasks.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground text-sm">
+                Drop tasks here
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  )
+}
 
 const COLUMNS = [
   { id: 'todo', title: 'To Do', color: 'border-l-slate-500' },
@@ -23,7 +90,7 @@ const COLUMNS = [
 export default function KanbanBoard() {
   const dispatch = useDispatch()
   const { toast } = useToast()
-  const tasks = useSelector((state) => state.tasks.tasks)
+  const tasks = useSelector(selectKanbanTasks)
   const aiAnalyzing = useSelector((state) => state.ui.aiAnalyzing)
 
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -162,59 +229,14 @@ export default function KanbanBoard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {COLUMNS.map((column) => {
             const columnTasks = getTasksByStatus(column.id)
-
             return (
-              <motion.div
+              <DroppableColumn
                 key={column.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Card className={`border-l-4 ${column.color} min-h-[600px]`}>
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span>{column.title}</span>
-                      <span className="text-sm font-normal text-muted-foreground">
-                        {columnTasks.length}
-                      </span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <SortableContext
-                      id={column.id}
-                      items={columnTasks.map(t => t.id)}
-                      strategy={verticalListSortingStrategy}
-                    >
-                      <div className="space-y-3">
-                        {columnTasks.map((task) => (
-                          <TaskCard
-                            key={task.id}
-                            task={task}
-                            onEdit={handleEdit}
-                            onDelete={handleDelete}
-                          />
-                        ))}
-
-                        {columnTasks.length === 0 && (
-                          <div className="text-center py-8 text-muted-foreground text-sm">
-                            No tasks yet
-                          </div>
-                        )}
-                      </div>
-                    </SortableContext>
-
-                    {/* Drop Zone */}
-                    <SortableContext id={column.id} items={[column.id]} strategy={verticalListSortingStrategy}>
-                      <div
-                        className="h-20 mt-3 border-2 border-dashed border-muted-foreground/20 rounded-lg flex items-center justify-center text-sm text-muted-foreground"
-                        style={{ pointerEvents: 'all' }}
-                      >
-                        Drop tasks here
-                      </div>
-                    </SortableContext>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                column={column}
+                tasks={columnTasks}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
             )
           })}
         </div>
@@ -232,6 +254,7 @@ export default function KanbanBoard() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         task={selectedTask}
+        boardType="kanban"
       />
     </div>
   )

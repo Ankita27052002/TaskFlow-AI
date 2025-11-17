@@ -224,6 +224,139 @@ Respond ONLY with a JSON object grouping tasks by category:
     
     throw new Error('Invalid AI response format')
   }
+
+  async estimateStoryPoints(title, description) {
+    const prompt = `Based on this user story, estimate the complexity using Fibonacci story points (1, 2, 3, 5, 8, 13, 21).
+
+Title: ${title}
+Description: ${description}
+
+Consider:
+- Technical complexity
+- Amount of work required
+- Uncertainty/risk
+- Dependencies
+
+Respond with ONLY a single number from the Fibonacci sequence: 1, 2, 3, 5, 8, 13, or 21.`
+
+    const messages = [
+      {
+        role: 'system',
+        content: 'You are a Scrum estimation expert. Respond with only a single Fibonacci number.',
+      },
+      {
+        role: 'user',
+        content: prompt,
+      },
+    ]
+
+    const response = await this.chat(messages, 0.2)
+    const points = parseInt(response.trim())
+    
+    // Validate Fibonacci number
+    const validPoints = [1, 2, 3, 5, 8, 13, 21]
+    return validPoints.includes(points) ? points : 3 // Default to 3 if invalid
+  }
+
+  async generateSprintSummary(sprintData, tasks) {
+    const completedTasks = tasks.filter(t => t.status === 'done')
+    const totalPoints = tasks.reduce((sum, t) => sum + (t.storyPoints || 0), 0)
+    const completedPoints = completedTasks.reduce((sum, t) => sum + (t.storyPoints || 0), 0)
+
+    const prompt = `Generate a sprint summary report.
+
+Sprint: ${sprintData.name}
+Goal: ${sprintData.goal}
+Duration: ${sprintData.startDate} to ${sprintData.endDate}
+
+Metrics:
+- Tasks: ${completedTasks.length} / ${tasks.length} completed
+- Story Points: ${completedPoints} / ${totalPoints} completed
+- Completion Rate: ${Math.round((completedPoints / totalPoints) * 100)}%
+
+Completed Tasks:
+${completedTasks.map(t => `- ${t.title} (${t.storyPoints} pts)`).join('\n')}
+
+Generate a concise 3-paragraph summary:
+1. Sprint achievements and key metrics
+2. What went well
+3. Areas for improvement`
+
+    const messages = [
+      {
+        role: 'system',
+        content: 'You are a Scrum Master generating sprint retrospective summaries.',
+      },
+      {
+        role: 'user',
+        content: prompt,
+      },
+    ]
+
+    return await this.chat(messages, 0.6)
+  }
+
+  async predictSprintCompletion(sprintData, tasks, currentDate) {
+    const completedPoints = tasks
+      .filter(t => t.status === 'done')
+      .reduce((sum, t) => sum + (t.storyPoints || 0), 0)
+    const totalPoints = tasks.reduce((sum, t) => sum + (t.storyPoints || 0), 0)
+    
+    const daysElapsed = Math.ceil(
+      (new Date(currentDate) - new Date(sprintData.startDate)) / (1000 * 60 * 60 * 24)
+    )
+    const totalDays = Math.ceil(
+      (new Date(sprintData.endDate) - new Date(sprintData.startDate)) / (1000 * 60 * 60 * 24)
+    )
+
+    const prompt = `Predict sprint completion likelihood.
+
+Sprint Progress:
+- Completed: ${completedPoints} / ${totalPoints} story points (${Math.round((completedPoints/totalPoints)*100)}%)
+- Time: Day ${daysElapsed} / ${totalDays} (${Math.round((daysElapsed/totalDays)*100)}%)
+
+Based on this data, provide:
+1. Completion likelihood (percentage)
+2. Risk assessment (low, medium, high)
+3. Recommended actions
+
+Respond ONLY with JSON:
+{
+  "likelihood": number (0-100),
+  "risk": "low|medium|high",
+  "recommendation": "brief action to take"
+}`
+
+    const messages = [
+      {
+        role: 'system',
+        content: 'You are a data analyst predicting sprint outcomes. Always respond with valid JSON only.',
+      },
+      {
+        role: 'user',
+        content: prompt,
+      },
+    ]
+
+    const response = await this.chat(messages, 0.3)
+    const jsonMatch = response.match(/\{[\s\S]*\}/)
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[0])
+    }
+    
+    throw new Error('Invalid AI response format')
+  }
 }
 
 export const aiService = new AIService()
+
+export const {
+  analyzeTaskPriority,
+  analyzeBulkTasks,
+  generateDailySummary,
+  generateWeeklySummary,
+  clusterTasks,
+  estimateStoryPoints,
+  generateSprintSummary,
+  predictSprintCompletion,
+} = aiService

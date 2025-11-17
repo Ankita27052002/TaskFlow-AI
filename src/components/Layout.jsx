@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { LayoutDashboard, KanbanSquare, BarChart3, CheckSquare, LogOut } from 'lucide-react'
+import { LayoutDashboard, KanbanSquare, BarChart3, CheckSquare, LogOut, Calendar, Zap } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from './ui/button'
 import ThemeToggle from './ThemeToggle'
@@ -15,6 +15,8 @@ export default function Layout() {
   const navItems = [
     { path: '/', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/kanban', label: 'Kanban', icon: KanbanSquare },
+    { path: '/sprint-planning', label: 'Sprint Planning', icon: Calendar },
+    { path: '/scrum-board', label: 'Scrum Board', icon: Zap },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
   ]
 

@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { X, Calendar, Clock } from 'lucide-react'
-import { addTask, updateTask } from '@/store/slices/taskSlice'
+import { X, Calendar, Clock, Zap, Sparkles } from 'lucide-react'
+import { addTask, updateTask, updateStoryPoints } from '@/store/slices/taskSlice'
 import { generateId } from '@/lib/utils'
+import { estimateStoryPoints } from '@/services/aiService'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
@@ -15,19 +16,81 @@ import {
   DialogHeader,
   DialogTitle,
 } from './ui/dialog'
+import { useToast } from './ui/toaster'
 
-export default function TaskDialog({ open, onOpenChange, task = null }) {
+export default function TaskDialog({ open, onOpenChange, task = null, sprintId = null, boardType = 'kanban' }) {
   const dispatch = useDispatch()
+  const { toast } = useToast()
   const isEditing = !!task
 
   const [formData, setFormData] = useState({
-    title: task?.title || '',
-    description: task?.description || '',
-    priority: task?.priority || 'medium',
-    status: task?.status || 'todo',
-    dueDate: task?.dueDate || '',
-    estimatedTime: task?.estimatedTime || '',
+    title: '',
+    description: '',
+    priority: 'medium',
+    status: 'todo',
+    dueDate: '',
+    estimatedTime: '',
+    storyPoints: 0,
   })
+
+  const [isEstimating, setIsEstimating] = useState(false)
+
+  const storyPointOptions = [0, 1, 2, 3, 5, 8, 13, 21]
+
+  // Update form data when task prop changes
+  useEffect(() => {
+    if (task) {
+      setFormData({
+        title: task.title || '',
+        description: task.description || '',
+        priority: task.priority || 'medium',
+        status: task.status || 'todo',
+        dueDate: task.dueDate || '',
+        estimatedTime: task.estimatedTime || '',
+        storyPoints: task.storyPoints || 0,
+      })
+    } else {
+      setFormData({
+        title: '',
+        description: '',
+        priority: 'medium',
+        status: 'todo',
+        dueDate: '',
+        estimatedTime: '',
+        storyPoints: 0,
+      })
+    }
+  }, [task, open])
+
+  const handleAIEstimate = async () => {
+    if (!formData.title || !formData.description) {
+      toast({
+        title: 'Missing Information',
+        description: 'Please add a title and description for AI estimation.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setIsEstimating(true)
+    try {
+      const points = await estimateStoryPoints(formData.title, formData.description)
+      setFormData({ ...formData, storyPoints: points })
+      toast({
+        title: 'AI Estimation Complete',
+        description: `Suggested ${points} story points`,
+      })
+    } catch (error) {
+      console.error('AI estimation error:', error)
+      toast({
+        title: 'Estimation Failed',
+        description: 'Could not estimate story points. Please select manually.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsEstimating(false)
+    }
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -39,12 +102,22 @@ export default function TaskDialog({ open, onOpenChange, task = null }) {
       id: task?.id || generateId(),
       createdAt: task?.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      sprintId: sprintId || task?.sprintId || null,
+      boardType: boardType,
     }
 
     if (isEditing) {
       dispatch(updateTask(taskData))
+      toast({
+        title: 'Task Updated',
+        description: 'Your task has been updated successfully.',
+      })
     } else {
       dispatch(addTask(taskData))
+      toast({
+        title: 'Task Created',
+        description: 'Your task has been created successfully.',
+      })
     }
 
     onOpenChange(false)
@@ -59,6 +132,7 @@ export default function TaskDialog({ open, onOpenChange, task = null }) {
       status: 'todo',
       dueDate: '',
       estimatedTime: '',
+      storyPoints: 0,
     })
   }
 
@@ -125,9 +199,49 @@ export default function TaskDialog({ open, onOpenChange, task = null }) {
               >
                 <option value="todo">To Do</option>
                 <option value="in-progress">In Progress</option>
+                <option value="review">In Review</option>
                 <option value="done">Done</option>
               </select>
             </div>
+          </div>
+
+          {/* Story Points Estimation */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label className="flex items-center gap-2">
+                <Zap className="h-4 w-4" />
+                Story Points
+              </Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleAIEstimate}
+                disabled={isEstimating}
+              >
+                <Sparkles className="h-4 w-4 mr-1" />
+                {isEstimating ? 'Estimating...' : 'AI Estimate'}
+              </Button>
+            </div>
+            <div className="grid grid-cols-8 gap-2">
+              {storyPointOptions.map(points => (
+                <button
+                  key={points}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, storyPoints: points })}
+                  className={`h-10 rounded-md border-2 transition-all ${
+                    formData.storyPoints === points
+                      ? 'border-primary bg-primary text-primary-foreground'
+                      : 'border-input hover:border-primary/50'
+                  }`}
+                >
+                  {points}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Fibonacci scale: 1=very small, 21=very large
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
