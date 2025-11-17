@@ -170,15 +170,15 @@ export default function ScrumBoard() {
 
   if (!activeSprint) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <Card>
-          <CardContent className="py-16 text-center">
-            <Zap className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-            <h2 className="text-2xl font-bold mb-2">No Active Sprint</h2>
-            <p className="text-muted-foreground mb-6">
+          <CardContent className="py-12 sm:py-16 text-center px-4">
+            <Zap className="h-12 w-12 sm:h-16 sm:w-16 mx-auto text-muted-foreground mb-4" />
+            <h2 className="text-xl sm:text-2xl font-bold mb-2">No Active Sprint</h2>
+            <p className="text-sm sm:text-base text-muted-foreground mb-6">
               Start a sprint from Sprint Planning to begin working
             </p>
-            <Button asChild>
+            <Button asChild className="w-full sm:w-auto">
               <a href="/sprint-planning">Go to Sprint Planning</a>
             </Button>
           </CardContent>
@@ -192,23 +192,23 @@ export default function ScrumBoard() {
   )
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* Sprint Header */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              <Zap className="h-8 w-8 text-primary" />
+            <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
+              <Zap className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
               {activeSprint.name}
             </h1>
-            <p className="text-muted-foreground mt-1">{activeSprint.goal}</p>
+            <p className="text-sm sm:text-base text-muted-foreground mt-1">{activeSprint.goal}</p>
           </div>
-          <div className="flex gap-2">
-            <Button onClick={handleAddTask} variant="outline" size="lg">
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Button onClick={handleAddTask} variant="outline" size="lg" className="w-full sm:w-auto">
               <Plus className="h-5 w-5 mr-2" />
               Add Task
             </Button>
-            <Button onClick={() => setIsCompleteDialogOpen(true)} size="lg">
+            <Button onClick={() => setIsCompleteDialogOpen(true)} size="lg" className="w-full sm:w-auto">
               <Trophy className="h-5 w-5 mr-2" />
               Complete Sprint
             </Button>
@@ -216,15 +216,15 @@ export default function ScrumBoard() {
         </div>
 
         {/* Sprint Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">
                 Progress
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{progress}%</div>
+              <div className="text-xl sm:text-2xl font-bold">{progress}%</div>
               <div className="mt-2 h-2 bg-muted rounded-full overflow-hidden">
                 <motion.div
                   className="h-full bg-primary"
@@ -238,12 +238,12 @@ export default function ScrumBoard() {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">
                 Story Points
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-xl sm:text-2xl font-bold">
                 {completedPoints} / {totalPoints}
               </div>
               <p className="text-xs text-muted-foreground mt-1">

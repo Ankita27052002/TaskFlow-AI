@@ -78,21 +78,21 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">
             Manage your tasks with AI-powered insights
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={generateSummary} variant="outline" disabled={aiAnalyzing}>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button onClick={generateSummary} variant="outline" disabled={aiAnalyzing} className="w-full sm:w-auto">
             <Sparkles className="mr-2 h-4 w-4" />
             {aiAnalyzing ? 'Analyzing...' : 'AI Summary'}
           </Button>
-          <Button onClick={handleAddNew}>
+          <Button onClick={handleAddNew} className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
             New Task
           </Button>
@@ -100,7 +100,7 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -108,11 +108,11 @@ export default function Dashboard() {
         >
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Tasks</CardTitle>
+              <CardTitle className="text-xs sm:text-sm font-medium">Total Tasks</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.total}</div>
+              <div className="text-xl sm:text-2xl font-bold">{stats.total}</div>
             </CardContent>
           </Card>
         </motion.div>
@@ -124,11 +124,11 @@ export default function Dashboard() {
         >
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Completed</CardTitle>
+              <CardTitle className="text-xs sm:text-sm font-medium">Completed</CardTitle>
               <CheckCircle2 className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.completed}</div>
+              <div className="text-xl sm:text-2xl font-bold">{stats.completed}</div>
             </CardContent>
           </Card>
         </motion.div>
@@ -140,11 +140,11 @@ export default function Dashboard() {
         >
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+              <CardTitle className="text-xs sm:text-sm font-medium">In Progress</CardTitle>
               <Clock className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.inProgress}</div>
+              <div className="text-xl sm:text-2xl font-bold">{stats.inProgress}</div>
             </CardContent>
           </Card>
         </motion.div>

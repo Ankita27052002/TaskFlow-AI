@@ -198,21 +198,21 @@ export default function KanbanBoard() {
   const activeTask = activeId ? tasks.find(task => task.id === activeId) : null
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Kanban Board</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Kanban Board</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">
             Drag and drop tasks to manage your workflow
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={analyzeWithAI} variant="outline" disabled={aiAnalyzing}>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button onClick={analyzeWithAI} variant="outline" disabled={aiAnalyzing} className="w-full sm:w-auto">
             <Sparkles className="mr-2 h-4 w-4" />
             {aiAnalyzing ? 'Analyzing...' : 'AI Prioritize'}
           </Button>
-          <Button onClick={handleAddNew}>
+          <Button onClick={handleAddNew} className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
             New Task
           </Button>
