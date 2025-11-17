@@ -1,4 +1,4 @@
-# TaskFlow AI - Smart Task Manager with AI Prioritization
+# TaskFlow AI - Smart Task Manager with AI & Scrum
 
 <div align="center">
 
@@ -8,9 +8,9 @@
 ![Vite](https://img.shields.io/badge/Vite-5.0-646CFF?style=for-the-badge&logo=vite)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css)
 
-**A modern kanban/task management app with AI-powered prioritization, time estimation, and productivity analytics.**
+**A modern task management app with Kanban & Scrum boards, AI-powered features, sprint planning, and productivity analytics.**
 
-[Features](#-features) • [Tech Stack](#-tech-stack) • [Installation](#-installation) • [Usage](#-usage) • [Screenshots](#-screenshots)
+[Features](#-features) • [Tech Stack](#-tech-stack) • [Installation](#-installation) • [Usage](#-usage) • [AI Setup](#-ai-setup)
 
 </div>
 
@@ -18,23 +18,34 @@
 
 ## 🚀 Features
 
-### Core Functionality
-- ✅ **Smart Task Management** - Create, edit, delete, and organize tasks
-- 🎯 **AI-Powered Prioritization** - Automatic priority assignment using Llama 3
+### Kanban Board
+- ✅ **Drag & Drop Interface** - Smooth task movement between columns
+- 🎯 **AI-Powered Prioritization** - Automatic priority assignment
 - ⏱️ **Time Estimation** - AI suggests estimated completion time
-- 🎨 **Beautiful Kanban Board** - Drag-and-drop interface with smooth animations
-- 📊 **Progress Analytics** - Visual charts showing productivity metrics
-- 📝 **AI Summaries** - Daily/weekly task summaries and insights
-- 🔄 **Real-time Updates** - Instant state management with Redux Toolkit
-- 💾 **Local Persistence** - Tasks saved to browser localStorage
+- 📊 **Visual Progress** - Real-time task status tracking
 
-### AI Features (Powered by Groq Llama 3)
+### Scrum Board
+- 🏃 **Sprint Planning** - Create and manage sprints
+- 📈 **Story Points** - Fibonacci estimation (0,1,2,3,5,8,13,21)
+- 🤖 **AI Story Point Estimation** - Smart complexity analysis
+- 🎯 **Sprint Metrics** - Progress tracking, velocity, burndown
+- 🔄 **Backlog Management** - Drag tasks from backlog to sprints
+- ✅ **Sprint Completion** - Retrospectives and summaries
+
+### AI Features
 - **Bulk Task Analysis** - Analyze multiple tasks at once
-- **Priority Assignment** - Intelligent high/medium/low categorization
-- **Time Estimation** - Smart estimation based on task complexity
-- **Daily Summaries** - Motivating daily productivity reports
-- **Weekly Summaries** - Comprehensive weekly insights
-- **Task Clustering** - Automatic categorization of related tasks
+- **Priority Assignment** - Intelligent categorization
+- **Story Point Estimation** - AI-powered complexity scoring
+- **Sprint Summaries** - AI-generated sprint insights
+- **Sprint Predictions** - Forecast sprint completion
+- **Daily/Weekly Summaries** - Productivity reports
+
+### Core Features
+- 🔐 **Firebase Authentication** - Google & Email login
+- 💾 **Local Persistence** - Tasks & sprints saved to localStorage
+- 📊 **Analytics Dashboard** - Charts and productivity metrics
+- 🎨 **Beautiful UI** - Modern design with smooth animations
+- 🌙 **Dark Mode** - Eye-friendly theme support
 
 ---
 
@@ -43,45 +54,37 @@
 ### Frontend
 - **React 18** - Modern UI library
 - **Vite** - Lightning-fast build tool
-- **JavaScript** - No TypeScript for simplicity
+- **JavaScript** - ES6+ features
 
 ### State Management
 - **Redux Toolkit** - Efficient state management
-- **React Redux** - React bindings for Redux
+- **React Redux** - React bindings
 
-### Styling
-- **Tailwind CSS** - Utility-first CSS framework
+### Styling & UI
+- **Tailwind CSS** - Utility-first CSS
 - **shadcn/ui** - Beautiful, accessible components
 - **Framer Motion** - Smooth animations
+- **Lucide React** - Clean icons
 
-### UI Functionality
-- **@dnd-kit** - Drag and drop for Kanban board
-- **Recharts** - Beautiful, composable charts
-- **Lucide React** - Clean, consistent icons
-
-### Data & API
-- **React Query** - Async state management
-- **Axios** - HTTP client for AI API calls
-
-### AI Integration
-- **Groq Llama 3** - Fast, free AI inference
-- **Together.ai** - Alternative AI provider (optional)
-
-### Routing
+### Functionality
+- **@dnd-kit** - Drag and drop for both boards
+- **Recharts** - Analytics charts
 - **React Router v6** - Client-side routing
+- **Axios** - HTTP client for AI APIs
+
+### Backend Services
+- **Firebase Auth** - User authentication
+- **OpenRouter / Groq** - AI inference APIs
 
 ---
 
 ## 📋 Prerequisites
 
-Before you begin, ensure you have:
-
-- **Node.js** 18+ and npm/yarn installed
-- **Groq API Key** (free) - Get it at [console.groq.com](https://console.groq.com)
-  - Sign up for free
-  - Navigate to API Keys
-  - Create a new API key
-  - Copy the key for later use
+- **Node.js** 18+ and npm installed
+- **Firebase Project** - [Create one](https://console.firebase.google.com)
+- **AI API Key** (choose one):
+  - **OpenRouter** (Recommended) - [Get free key](https://openrouter.ai/keys)
+  - **Groq** (Backup) - [Get free key](https://console.groq.com)
 
 ---
 
@@ -104,16 +107,87 @@ npm install
 
 Create a `.env` file in the root directory:
 
-```bash
-cp .env.example .env
-```
-
-Edit `.env` and add your Groq API key:
-
 ```env
-VITE_GROQ_API_KEY=your_actual_groq_api_key_here
+# OpenRouter API Configuration (Recommended)
+VITE_OPENROUTER_API_KEY=your_openrouter_api_key_here
+VITE_OPENROUTER_MODEL=meta-llama/llama-3.3-70b-instruct:free
+
+# Groq API Configuration (Backup)
+VITE_GROQ_API_KEY=your_groq_api_key_here
 VITE_GROQ_MODEL=llama-3.1-70b-versatile
+
+# Firebase Configuration
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
 ```
+
+---
+
+## 🤖 AI Setup Guide
+
+### Option 1: OpenRouter (Recommended - Free Llama 3.3)
+
+1. **Get API Key**:
+   - Visit https://openrouter.ai/keys
+   - Sign up/Login with Google or Email
+   - Click "Create Key"
+   - Copy your API key
+
+2. **Update `.env`**:
+   ```env
+   VITE_OPENROUTER_API_KEY=sk-or-v1-xxxxx
+   VITE_OPENROUTER_MODEL=meta-llama/llama-3.3-70b-instruct:free
+   ```
+
+3. **Free Models Available**:
+   - `meta-llama/llama-3.3-70b-instruct:free` (Recommended)
+   - `meta-llama/llama-3.1-8b-instruct:free`
+   - `google/gemma-7b-it:free`
+   - `microsoft/phi-3-mini-128k-instruct:free`
+
+### Option 2: Groq (Backup - Fast Inference)
+
+1. **Get API Key**:
+   - Visit https://console.groq.com
+   - Sign up and navigate to API Keys
+   - Create new key
+
+2. **Update `.env`**:
+   ```env
+   VITE_GROQ_API_KEY=gsk_xxxxx
+   VITE_GROQ_MODEL=llama-3.1-70b-versatile
+   ```
+
+3. **Available Models**:
+   - `llama-3.1-70b-versatile` (Best quality)
+   - `llama-3.1-8b-instant` (Fastest)
+   - `mixtral-8x7b-32768` (Large context)
+
+**Note**: The app automatically uses OpenRouter if configured, otherwise falls back to Groq.
+
+---
+
+## 🔥 Firebase Setup
+
+1. **Create Firebase Project**:
+   - Go to https://console.firebase.google.com
+   - Click "Add Project"
+   - Follow the setup wizard
+
+2. **Enable Authentication**:
+   - In Firebase Console, go to Authentication
+   - Click "Get Started"
+   - Enable "Google" sign-in method
+   - Enable "Email/Password" (optional)
+
+3. **Get Config**:
+   - Go to Project Settings (⚙️ icon)
+   - Scroll to "Your apps" → "Web app"
+   - Copy the config values to `.env`
 
 ---
 
@@ -143,10 +217,47 @@ npm run preview
 
 ## 📱 Usage Guide
 
-### 1. **Create Your First Task**
-- Click "New Task" button
-- Fill in task details (title, description, priority, due date, estimated time)
-- Click "Create Task"
+### Kanban Board
+
+1. **Create Task**:
+   - Click "New Task" button
+   - Fill in details (title, description, priority, due date)
+   - Task is created in Kanban board
+
+2. **Drag & Drop**:
+   - Drag tasks between columns (To Do → In Progress → Done)
+   - Status updates automatically
+
+3. **AI Prioritize**:
+   - Click "AI Prioritize" button
+   - AI analyzes all pending tasks
+   - Assigns priority levels and time estimates
+
+### Scrum Board
+
+1. **Create Sprint**:
+   - Go to Sprint Planning
+   - Click "Create Sprint"
+   - Set name, goal, dates, and capacity
+
+2. **Add Tasks to Sprint**:
+   - Create tasks with story points
+   - Use AI to estimate story points
+   - Drag tasks from backlog to sprint
+
+3. **Start Sprint**:
+   - Click "Start Sprint" button
+   - Go to Scrum Board to manage active sprint
+
+4. **Manage Sprint**:
+   - Drag tasks between columns
+   - Add new tasks to active sprint
+   - Track progress and metrics
+
+5. **Complete Sprint**:
+   - Click "Complete Sprint"
+   - Add retrospective notes
+   - View sprint summary
 
 ### 2. **Use the Kanban Board**
 - Navigate to "Kanban" tab
@@ -180,38 +291,40 @@ TaskFlowAI/
 ├── src/
 │   ├── components/          # React components
 │   │   ├── ui/             # shadcn/ui components
-│   │   │   ├── button.jsx
-│   │   │   ├── card.jsx
-│   │   │   ├── dialog.jsx
-│   │   │   ├── input.jsx
-│   │   │   ├── tabs.jsx
-│   │   │   └── toast.jsx
 │   │   ├── Layout.jsx      # Main layout with navigation
 │   │   ├── TaskCard.jsx    # Individual task card
-│   │   └── TaskDialog.jsx  # Task create/edit modal
+│   │   ├── TaskDialog.jsx  # Task create/edit modal
+│   │   ├── ThemeProvider.jsx # Dark mode support
+│   │   └── ProtectedRoute.jsx # Auth guard
 │   ├── pages/              # Route pages
 │   │   ├── Dashboard.jsx   # Overview & stats
-│   │   ├── KanbanBoard.jsx # Drag-and-drop board
-│   │   └── Analytics.jsx   # Charts & insights
+│   │   ├── KanbanBoard.jsx # Kanban drag-and-drop
+│   │   ├── SprintPlanning.jsx # Sprint management
+│   │   ├── ScrumBoard.jsx  # Active sprint board
+│   │   ├── Analytics.jsx   # Charts & insights
+│   │   ├── Login.jsx       # Authentication
+│   │   └── VerifyEmail.jsx # Email verification
 │   ├── store/              # Redux store
 │   │   ├── store.js        # Store configuration
 │   │   └── slices/
-│   │       ├── taskSlice.js # Task state management
-│   │       └── uiSlice.js   # UI state management
+│   │       ├── taskSlice.js    # Task state (Kanban + Scrum)
+│   │       ├── sprintSlice.js  # Sprint management
+│   │       └── uiSlice.js      # UI state
+│   ├── contexts/           # React contexts
+│   │   └── AuthContext.jsx # Firebase auth
 │   ├── services/           # External services
-│   │   └── aiService.js    # Groq AI integration
+│   │   └── aiService.js    # OpenRouter/Groq AI
 │   ├── lib/                # Utilities
 │   │   ├── utils.js        # Helper functions
-│   │   └── localStorage.js # Local storage helpers
+│   │   ├── localStorage.js # Persistence
+│   │   └── firebase.js     # Firebase config
 │   ├── App.jsx             # Main app component
 │   ├── main.jsx            # App entry point
 │   └── index.css           # Global styles
-├── public/                 # Static assets
-├── .env.example            # Environment variables template
+├── .env                    # Environment variables
 ├── package.json            # Dependencies
 ├── vite.config.js          # Vite configuration
-├── tailwind.config.js      # Tailwind configuration
-└── README.md               # This file
+└── tailwind.config.js      # Tailwind configuration
 ```
 
 ---
@@ -225,12 +338,21 @@ The AI analyzes tasks based on:
 - **Complexity** - Task description length and detail
 - **Context** - Related tasks and dependencies
 
-### Time Estimation
+### Story Point Estimation
 
-AI provides estimates considering:
+AI estimates complexity using Fibonacci sequence (0,1,2,3,5,8,13,21) based on:
 - Task description and scope
-- Historical patterns (if available)
-- Complexity indicators
+- Technical complexity indicators
+- Similar task patterns
+- Acceptance criteria requirements
+
+### Sprint Intelligence
+
+AI provides:
+- **Sprint Summaries** - Key achievements and metrics
+- **Velocity Predictions** - Forecast sprint completion
+- **Bottleneck Detection** - Identify blocking issues
+- **Recommendations** - Task prioritization suggestions
 
 ### Smart Summaries
 
@@ -239,6 +361,41 @@ Summaries include:
 - 🎯 Key priorities for tomorrow
 - 📈 Productivity insights
 - 💪 Motivational messages
+
+---
+
+## 📊 Key Metrics Tracked
+
+### Kanban Metrics
+- **Total Tasks** - Overall task count
+- **Completion Rate** - Percentage of completed tasks
+- **Priority Distribution** - High/Medium/Low breakdown
+- **Status Overview** - To Do/In Progress/Done
+- **Time Allocation** - Estimated hours by priority
+
+### Scrum Metrics
+- **Story Points** - Completed vs. Total per sprint
+- **Sprint Velocity** - Average points per sprint
+- **Sprint Progress** - Real-time completion percentage
+- **Burndown** - Remaining work over time
+- **Team Capacity** - Available vs. committed points
+
+---
+
+## 🌟 Why This Project Stands Out
+
+### Technical Highlights
+✅ **Dual Board System** - Kanban + Scrum in one app  
+✅ **AI Integration** - Multiple AI providers (OpenRouter, Groq)  
+✅ **Firebase Auth** - Production-ready authentication  
+✅ **State Management** - Redux Toolkit with persistence  
+✅ **Drag & Drop** - Advanced @dnd-kit implementation  
+✅ **Modern Stack** - React 18, Vite, Tailwind  
+✅ **Type Safety** - Proper prop validation  
+✅ **Responsive Design** - Mobile-first approach  
+
+### For Your Resume
+> "Developed a comprehensive task management platform with dual Kanban/Scrum boards, AI-powered story point estimation, and sprint analytics. Integrated OpenRouter AI (Llama 3.3) for intelligent task prioritization, Firebase authentication, and implemented advanced drag-and-drop functionality using @dnd-kit. Built with React, Redux Toolkit, and TailwindCSS."
 
 ---
 
@@ -253,45 +410,32 @@ theme: {
   extend: {
     colors: {
       primary: {
-        DEFAULT: "hsl(var(--primary))", // Change this
+        DEFAULT: "hsl(142 71% 45%)", // Green theme
       },
     },
   },
 }
 ```
 
+### Switch AI Provider
+
+In `.env`, prioritize OpenRouter or Groq:
+
+```env
+# Use OpenRouter (will be used if key is valid)
+VITE_OPENROUTER_API_KEY=sk-or-v1-xxxxx
+
+# Fallback to Groq
+VITE_GROQ_API_KEY=gsk_xxxxx
+```
+
 ### Adjust AI Prompts
 
-Edit `src/services/aiService.js` to customize AI behavior
-
-### Add New Task Categories
-
-Modify `src/store/slices/taskSlice.js`
-
----
-
-## 📊 Key Metrics Tracked
-
-- **Total Tasks** - Overall task count
-- **Completion Rate** - Percentage of completed tasks
-- **Priority Distribution** - High/Medium/Low breakdown
-- **Status Overview** - To Do/In Progress/Done
-- **Time Allocation** - Estimated hours by priority
-- **Weekly Trends** - 7-day completion history
-
----
-
-## 🌟 Why This Project Stands Out
-
-### For Your Resume
-✅ **Full-Stack Complexity** - Redux, React Query, routing  
-✅ **AI Integration** - Real AI features, not just UI  
-✅ **Modern Tech Stack** - Industry-standard tools  
-✅ **Production-Ready** - Error handling, state persistence  
-✅ **Great UI/UX** - Smooth animations, responsive design  
-
-### Resume Line
-> "Built a task management platform with AI-based prioritization, summaries, and productivity analytics using React, Redux Toolkit, and Llama AI models via Groq API. Implemented drag-and-drop Kanban board, real-time analytics with Recharts, and automated task clustering."
+Edit `src/services/aiService.js` to customize:
+- Priority assignment logic
+- Story point estimation criteria
+- Sprint summary format
+- Prediction algorithms
 
 ---
 
@@ -315,11 +459,14 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
-- [Groq](https://groq.com) - For fast, free AI inference
+- [OpenRouter](https://openrouter.ai) - Free AI model access
+- [Groq](https://groq.com) - Fast AI inference
+- [Firebase](https://firebase.google.com) - Authentication & backend
 - [shadcn/ui](https://ui.shadcn.com) - Beautiful component library
 - [Recharts](https://recharts.org) - Chart library
 - [Framer Motion](https://www.framer.com/motion/) - Animation library
 - [@dnd-kit](https://dndkit.com/) - Drag and drop toolkit
+- [Meta Llama](https://www.llama.com/) - Open-source AI models
 
 ---
 
@@ -333,8 +480,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 <div align="center">
 
-**Built with ❤️ using React, Redux, TailwindCSS, and AI**
+**Built with ❤️ using React, Redux, Firebase, TailwindCSS, and AI**
 
 ⭐ Star this repo if you find it helpful!
+
+### 🚀 Features: Kanban Board • Scrum Board • Sprint Planning • AI Story Points • Firebase Auth • Analytics
 
 </div>

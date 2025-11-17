@@ -1,23 +1,57 @@
 import axios from 'axios'
 
-const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
-const API_KEY = import.meta.env.VITE_GROQ_API_KEY
-const MODEL = import.meta.env.VITE_GROQ_MODEL || 'llama-3.1-70b-versatile'
+// Try OpenRouter first, fallback to Groq
+const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY
+const OPENROUTER_MODEL = import.meta.env.VITE_OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct:free'
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY
+const GROQ_MODEL = import.meta.env.VITE_GROQ_MODEL || 'llama-3.1-70b-versatile'
+
+// Determine which API to use
+const USE_OPENROUTER = OPENROUTER_API_KEY && OPENROUTER_API_KEY !== 'your_openrouter_api_key_here'
+const API_KEY = USE_OPENROUTER ? OPENROUTER_API_KEY : GROQ_API_KEY
+const MODEL = USE_OPENROUTER ? OPENROUTER_MODEL : GROQ_MODEL
 
 class AIService {
   constructor() {
-    this.client = axios.create({
-      baseURL: GROQ_API_URL,
-      headers: {
-        'Authorization': `Bearer ${API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-    })
+    if (!API_KEY) {
+      console.warn('AI API key not configured. AI features will be disabled.')
+    }
+    
+    if (USE_OPENROUTER) {
+      // OpenRouter configuration
+      this.client = axios.create({
+        baseURL: 'https://openrouter.ai/api/v1',
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': window.location.origin,
+          'X-Title': 'TaskFlow AI',
+        },
+        timeout: 30000,
+      })
+      console.log('Using OpenRouter with model:', MODEL)
+    } else {
+      // Groq configuration
+      this.client = axios.create({
+        baseURL: 'https://api.groq.com/openai/v1',
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        timeout: 30000,
+      })
+      console.log('Using Groq with model:', MODEL)
+    }
   }
 
   async chat(messages, temperature = 0.7) {
     try {
-      const response = await this.client.post('', {
+      // Check if API key is configured
+      if (!API_KEY) {
+        throw new Error('Groq API key not configured')
+      }
+
+      const response = await this.client.post('/chat/completions', {
         model: MODEL,
         messages,
         temperature,
@@ -25,8 +59,18 @@ class AIService {
       })
       return response.data.choices[0].message.content
     } catch (error) {
-      console.error('AI Service Error:', error)
-      throw new Error('Failed to get AI response')
+      console.error('AI Service Error:', error.response?.data || error.message)
+      
+      // Return a default response instead of throwing
+      if (error.response?.status === 400) {
+        throw new Error('Invalid API request. Please check your Groq API configuration.')
+      }
+      
+      if (error.code === 'ECONNABORTED') {
+        throw new Error('Request timeout. Please check your internet connection.')
+      }
+      
+      throw new Error(error.response?.data?.error?.message || 'Failed to get AI response. Please try again.')
     }
   }
 
