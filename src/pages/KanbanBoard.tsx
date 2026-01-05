@@ -127,7 +127,7 @@ export default function KanbanBoard() {
     setActiveId(event.active.id)
   }
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: any) => {
     const { active, over } = event
 
     if (!over) {
@@ -142,7 +142,7 @@ export default function KanbanBoard() {
       dispatch(updateTaskStatus({ id: taskId, status: newStatus }))
       toast({
         title: 'Task moved',
-        description: `Task moved to ${COLUMNS.find(col => col.id === newStatus).title}`,
+        description: `Task moved to ${COLUMNS.find(col => col.id === newStatus)?.title || newStatus}`,
       })
     }
 

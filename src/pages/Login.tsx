@@ -167,9 +167,11 @@ export default function Login() {
                           Didn't receive the email?
                         </p>
                         <Button
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.preventDefault()
                             setEmailSent(false)
-                            handleEmailSubmit({ preventDefault: () => {} })
+                            const fakeEvent = { preventDefault: () => {} } as React.FormEvent<HTMLFormElement>
+                            handleEmailSubmit(fakeEvent)
                           }}
                           variant="outline"
                           disabled={isLoading}

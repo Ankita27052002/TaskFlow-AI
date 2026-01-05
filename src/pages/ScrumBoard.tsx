@@ -50,7 +50,7 @@ function DroppableColumn({ id, title, tasks, icon: Icon, count, onEdit, onDelete
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center justify-between text-lg">
             <span className="flex items-center gap-2">
-              <Icon className={`h-5 w-5 ${statusConfig[id]?.color || 'text-gray-500'}`} />
+              <Icon className={`h-5 w-5 ${statusConfig[id as keyof typeof statusConfig]?.color || 'text-gray-500'}`} />
               {title}
             </span>
             <span className="text-sm font-normal text-muted-foreground">
@@ -134,7 +134,7 @@ export default function ScrumBoard() {
       dispatch(updateTaskStatus({ id: taskId, status: newStatus }))
       toast({
         title: 'Task Updated',
-        description: `Task moved to ${statusConfig[newStatus].label}`,
+        description: `Task moved to ${statusConfig[newStatus as keyof typeof statusConfig]?.label || newStatus}`,
       })
     }
   }
